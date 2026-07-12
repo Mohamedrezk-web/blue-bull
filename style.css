@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+#mainCanvas {
+  background: url(./assets/background.png) no-repeat center center/cover;
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#overlay {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#obstacles,
+#bull,
+#egg,
+#glob,
+#globs,
+#larval {
+  display: none;
+}
