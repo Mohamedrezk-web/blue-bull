@@ -54,7 +54,7 @@
 
     async mount(container) {
       _container = container;
-      _container.style.cssText = 'position:relative;overflow:hidden;min-height:540px;';
+      _container.style.cssText = 'position:relative;overflow:hidden;';
 
       const canvas = document.createElement('canvas');
       canvas.style.cssText = [
@@ -106,11 +106,13 @@
         _game?.resize(canvas.width, canvas.height);
       };
       window.addEventListener('resize', _resizeHandler);
+      document.addEventListener('fullscreenchange', _resizeHandler);
     },
 
     async unmount(_container) {
       if (_resizeHandler) {
         window.removeEventListener('resize', _resizeHandler);
+        document.removeEventListener('fullscreenchange', _resizeHandler);
         _resizeHandler = null;
       }
       if (_game) {
