@@ -2,7 +2,13 @@ export class InputManager {
   constructor(game, canvas) {
     this.game = game;
     this.canvas = canvas;
+    this._handlers = [];
     this.bindEvents();
+  }
+
+  _on(target, event, handler) {
+    target.addEventListener(event, handler);
+    this._handlers.push([target, event, handler]);
   }
 
   bindEvents() {
@@ -12,23 +18,23 @@ export class InputManager {
       this.game.mouse.y = y;
     };
 
-    this.canvas.addEventListener("pointerdown", (e) => {
+    this._on(this.canvas, "pointerdown", (e) => {
       e.preventDefault();
       updatePointer(e.offsetX, e.offsetY, true);
     });
 
-    this.canvas.addEventListener("pointerup", (e) => {
+    this._on(this.canvas, "pointerup", (e) => {
       e.preventDefault();
       updatePointer(e.offsetX, e.offsetY, false);
     });
 
-    this.canvas.addEventListener("pointermove", (e) => {
+    this._on(this.canvas, "pointermove", (e) => {
       if (this.game.mouse.pressed) {
         updatePointer(e.offsetX, e.offsetY, true);
       }
     });
 
-    window.addEventListener("keydown", (e) => {
+    this._on(window, "keydown", (e) => {
       if (e.key === "d") {
         this.game.debug = !this.game.debug;
       }
@@ -36,5 +42,12 @@ export class InputManager {
         this.game.reset();
       }
     });
+  }
+
+  destroy() {
+    this._handlers.forEach(([target, event, handler]) => {
+      target.removeEventListener(event, handler);
+    });
+    this._handlers = [];
   }
 }

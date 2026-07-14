@@ -246,4 +246,9 @@ export class Game {
   start() {
     this.loop.start();
   }
+
+  destroy() {
+    this.loop.stop();
+    this.inputManager.destroy();
+  }
 }
