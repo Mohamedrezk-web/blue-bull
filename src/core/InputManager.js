@@ -6,22 +6,25 @@ export class InputManager {
   }
 
   bindEvents() {
-    this.canvas.addEventListener("mousedown", (e) => {
-      this.game.mouse.pressed = true;
-      this.game.mouse.x = e.offsetX;
-      this.game.mouse.y = e.offsetY;
+    const updatePointer = (x, y, pressed) => {
+      this.game.mouse.pressed = pressed;
+      this.game.mouse.x = x;
+      this.game.mouse.y = y;
+    };
+
+    this.canvas.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      updatePointer(e.offsetX, e.offsetY, true);
     });
 
-    this.canvas.addEventListener("mouseup", (e) => {
-      this.game.mouse.pressed = false;
-      this.game.mouse.x = e.offsetX;
-      this.game.mouse.y = e.offsetY;
+    this.canvas.addEventListener("pointerup", (e) => {
+      e.preventDefault();
+      updatePointer(e.offsetX, e.offsetY, false);
     });
 
-    this.canvas.addEventListener("mousemove", (e) => {
+    this.canvas.addEventListener("pointermove", (e) => {
       if (this.game.mouse.pressed) {
-        this.game.mouse.x = e.offsetX;
-        this.game.mouse.y = e.offsetY;
+        updatePointer(e.offsetX, e.offsetY, true);
       }
     });
 

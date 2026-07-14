@@ -4,14 +4,24 @@ window.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("mainCanvas");
   const ctx = canvas.getContext("2d");
 
-  canvas.width = 1280;
-  canvas.height = 720;
+  function resizeCanvas() {
+    canvas.width = Math.max(800, window.innerWidth - 40);
+    canvas.height = Math.max(500, window.innerHeight - 40);
+  }
+
+  resizeCanvas();
+  const game = new Game(canvas);
+  game.resize(canvas.width, canvas.height);
+
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+    game.resize(canvas.width, canvas.height);
+  });
 
   ctx.fillStyle = "white";
   ctx.lineWidth = 3;
   ctx.strokeStyle = "white";
 
-  const game = new Game(canvas);
   game.init();
   game.start();
 });

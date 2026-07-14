@@ -25,6 +25,7 @@ export class Game {
     this.player = new Player(this);
     this.numberOfObstacles = DEFAULT_OBSTACLE_COUNT;
     this.maxEggs = MAX_EGGS;
+    this.initialGlobs = 5;
     this.debug = false;
     this.eggTimer = 0;
     this.eggInterval = DEFAULT_EGG_INTERVAL;
@@ -41,6 +42,43 @@ export class Game {
     this.particles = [];
     this.winingScore = WIN_SCORE;
     this.loop = new GameLoop(this, this.renderer.context, canvas);
+    this.setResponsiveConfig();
+  }
+
+  resize(width, height) {
+    this.width = width;
+    this.height = height;
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.mouse.x = width / 2;
+    this.mouse.y = height / 2;
+    this.player.collisionX = width / 2;
+    this.player.collisionY = height / 2;
+    this.player.spriteX = this.player.collisionX - this.player.width * 0.5;
+    this.player.spriteY = this.player.collisionY - this.player.height * 0.5;
+    this.setResponsiveConfig();
+  }
+
+  setResponsiveConfig() {
+    const width = this.width;
+    const isMobile = width <= 768 || window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile) {
+      this.numberOfObstacles = 1;
+      this.initialGlobs = 2;
+      this.maxEggs = 3;
+      this.eggInterval = 1400;
+    } else if (width <= 1280) {
+      this.numberOfObstacles = 3;
+      this.initialGlobs = 4;
+      this.maxEggs = 6;
+      this.eggInterval = 1200;
+    } else {
+      this.numberOfObstacles = Math.max(4, Math.round(width / 420));
+      this.initialGlobs = Math.max(5, Math.round(width / 260));
+      this.maxEggs = Math.min(20, Math.round(width / 160));
+      this.eggInterval = 900;
+    }
   }
 
   render(context) {
@@ -101,7 +139,8 @@ export class Game {
   }
 
   init() {
-    for (let i = 0; i < 5; i++) {
+    this.setResponsiveConfig();
+    for (let i = 0; i < this.initialGlobs; i++) {
       this.addGlob();
     }
     let attempts = 0;
@@ -152,6 +191,7 @@ export class Game {
     this.mouse.y = this.canvas.height / 2;
     this.mouse.pressed = false;
     this.gameObjects = [this.player];
+    this.setResponsiveConfig();
     this.init();
     this.loop.start();
   }
