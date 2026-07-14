@@ -144,22 +144,28 @@ export class Game {
       this.addGlob();
     }
     let attempts = 0;
-    while (this.obstacles.length < this.numberOfObstacles && attempts < 100) {
+    while (this.obstacles.length < this.numberOfObstacles && attempts < 300) {
       const obstacle = new Obstacle(this);
+      const safeSpacing = 140;
+      obstacle.collisionX = safeSpacing + Math.random() * (this.width - safeSpacing * 2);
+      obstacle.collisionY = this.topMargin + safeSpacing + Math.random() * (this.height - this.topMargin - safeSpacing * 2);
+      obstacle.spriteX = obstacle.collisionX - obstacle.width * 0.5;
+      obstacle.spriteY = obstacle.collisionY - obstacle.height * 0.5 - 70;
+
       let overlapping = false;
       this.obstacles.forEach((existingObstacle) => {
         const distance = Math.hypot(obstacle.collisionX - existingObstacle.collisionX, obstacle.collisionY - existingObstacle.collisionY);
-        if (distance < obstacle.collisionRadius + existingObstacle.collisionRadius) {
+        if (distance < obstacle.collisionRadius + existingObstacle.collisionRadius + safeSpacing) {
           overlapping = true;
         }
       });
-      const margin = obstacle.collisionRadius * 3;
+
       if (
         !overlapping &&
         obstacle.spriteX > 0 &&
         obstacle.spriteX < this.width - obstacle.width &&
-        obstacle.collisionY > this.topMargin + margin &&
-        obstacle.collisionY < this.height - margin
+        obstacle.collisionY > this.topMargin + safeSpacing &&
+        obstacle.collisionY < this.height - safeSpacing
       ) {
         this.obstacles.push(obstacle);
       }
