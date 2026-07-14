@@ -19,6 +19,9 @@ export class Player extends Entity {
     this.spriteY = this.collisionY - this.height * 0.5;
     this.frameX = 0;
     this.frameY = 0;
+    this.frameTimer = 0;
+    this.frameInterval = 5;
+    this.framesPerRow = 59;
     this.image = this.game.assets.bull;
   }
 
@@ -78,6 +81,17 @@ export class Player extends Entity {
     this.collisionY += this.speedY * this.speedModifier;
     this.spriteX = this.collisionX - this.width * 0.5;
     this.spriteY = this.collisionY - this.height * 0.5;
+
+    if (distance > 0) {
+      this.frameTimer += 16.66;
+      if (this.frameTimer >= this.frameInterval) {
+        this.frameTimer = 0;
+        this.frameX = (this.frameX + 1) % this.framesPerRow;
+      }
+    } else {
+      this.frameX = 0;
+      this.frameTimer = 0;
+    }
 
     if (this.collisionX < 0 + this.collisionRadius) this.collisionX = 0 + this.collisionRadius;
     else if (this.collisionX > this.game.width - this.collisionRadius) this.collisionX = this.game.width - this.collisionRadius;

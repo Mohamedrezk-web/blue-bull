@@ -142,8 +142,15 @@ export class Game {
     this.player.collisionY = this.height / 2;
     this.player.speedX = 0;
     this.player.speedY = 0;
+    this.player.dx = 0;
+    this.player.dy = 0;
+    this.player.frameX = 0;
+    this.player.frameTimer = 0;
     this.player.spriteX = this.player.collisionX - this.player.width * 0.5;
     this.player.spriteY = this.player.collisionY - this.player.height * 0.5;
+    this.mouse.x = this.canvas.width / 2;
+    this.mouse.y = this.canvas.height / 2;
+    this.mouse.pressed = false;
     this.gameObjects = [this.player];
     this.init();
     this.loop.start();
