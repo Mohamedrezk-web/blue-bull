@@ -100,24 +100,39 @@ export class Game {
     if (this.score >= this.winingScore) {
       this.gameOver = true;
       context.save();
-      context.fillStyle = "rgba(0,0,0,0.5)";
+      context.fillStyle = "rgba(0,0,0,0.6)";
       context.fillRect(0, 0, this.width, this.height);
       context.fillStyle = "white";
       context.textAlign = "center";
-      let m1;
-      let m2;
-      if (this.casualties <= 5) {
-        m1 = "Perfect";
-        m2 = "i'm proud of you";
-      } else {
-        m1 = "Too many Casualties";
-        m2 = "Still proud of you DW do better next time, you lost " + this.casualties + " Larva";
-      }
-      context.font = "130px Helvetica";
-      context.fillText(m1, this.width * 0.5, this.height * 0.5 - 20);
-      context.font = "40px Helvetica";
-      context.fillText(m2, this.width * 0.5, this.height * 0.5 + 30);
-      context.fillText("Press R to start again", this.width * 0.5, this.height * 0.5 + 80);
+      context.textBaseline = "top";
+
+      const panelWidth = Math.min(this.width * 0.85, 900);
+      const title = this.casualties <= 5 ? "Victory!" : "Game Over";
+      const message = this.casualties <= 5
+        ? "You rescued most of the larvae and completed the mission. Great work!"
+        : "You reached the goal, but too many larvae were lost. Keep them safer next time.";
+      const stats = [`Score: ${this.score}`, `Larvae lost: ${this.casualties}`];
+      const instruction = "Press R to restart";
+
+      const titleSize = Math.max(56, this.width / 18);
+      const bodySize = Math.max(20, this.width / 60);
+      const lineHeight = bodySize * 1.6;
+      let y = this.height * 0.25;
+
+      context.font = `${titleSize}px Helvetica`;
+      context.fillText(title, this.width * 0.5, y);
+
+      y += titleSize + 24;
+      y += this.drawWrappedText(context, message, this.width * 0.5, y, panelWidth, lineHeight, bodySize);
+
+      y += lineHeight;
+      stats.forEach((line) => {
+        y += this.drawWrappedText(context, line, this.width * 0.5, y, panelWidth, lineHeight, bodySize);
+      });
+
+      y += lineHeight;
+      context.font = `${Math.max(18, this.width / 80)}px Helvetica`;
+      context.fillText(instruction, this.width * 0.5, y);
       context.restore();
     }
   }
@@ -200,6 +215,32 @@ export class Game {
     this.setResponsiveConfig();
     this.init();
     this.loop.start();
+  }
+
+  drawWrappedText(context, text, x, y, maxWidth, lineHeight, fontSize) {
+    context.font = `${fontSize}px Helvetica`;
+    const words = text.split(" ");
+    let line = "";
+    let currentY = y;
+
+    words.forEach((word) => {
+      const testLine = line ? `${line} ${word}` : word;
+      const metrics = context.measureText(testLine);
+      if (metrics.width > maxWidth && line) {
+        context.fillText(line, x, currentY);
+        line = word;
+        currentY += lineHeight;
+      } else {
+        line = testLine;
+      }
+    });
+
+    if (line) {
+      context.fillText(line, x, currentY);
+      currentY += lineHeight;
+    }
+
+    return currentY - y;
   }
 
   start() {
